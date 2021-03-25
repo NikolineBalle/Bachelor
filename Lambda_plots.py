@@ -11,8 +11,9 @@ import egrss
 n     = 100
 sigma = 0.1
 a,b   = -0.2, 0.5
-
-x = a + np.sort(np.random.uniform(low = 0, high = 1, size = (n,1)),axis =0) *(b-a)
+p = 2  #degree of splines
+xi     = (b-a) ** (2 * p - 1) 
+x = np.linspace(a,b,n)
 
 # Function 
 def f(x):
@@ -32,7 +33,7 @@ plt.xlim((a,b))
 plt.xticks(xx, " ")
 plt.yticks(f(xx), " ")
 plt.tick_params(left=False, bottom = False, right = False, top = False)
-plt.legend(['$y(x)$', 'data'], numpoints = 1, prop = {'size': 16}, loc = 'upper left')
+plt.legend(['$y(x)$', '$\hat{y}_i$'], numpoints = 1, prop = {'size': 16}, loc = 'upper left')
 ax = plt.gca()
 ax.set_facecolor('whitesmoke')
 for spine in plt.gca().spines.values():
@@ -44,13 +45,13 @@ def smoothing_spline_reg(Ut,Wt,z,yhat,obj = 'nothing'):
     p,n = Ut.shape
     B   = np.zeros((n,p))
     for k in range(p):
-        B[:,k] = egrss.trsv(Ut,Wt,z,Ut[k,:].T,'N')
+        B[:,k] = egrss.trsv(Ut,Wt,Ut[k,:].T,z,'N')
     Q, R     = qr(B)
-    c        = egrss.trsv(Ut,Wt,z,yhat,'N')
+    c        = egrss.trsv(Ut,Wt,yhat,z,'N')
     c        = np.dot(Q.T,c)
     d        = solve(R[0:p,0:p],c[0:p])
     c[0:p]   = 0
-    c        = egrss.trsv(Ut,Wt,z,np.dot(Q,c),'T')
+    c        = egrss.trsv(Ut,Wt,np.dot(Q,c),z,'T')
     if obj == 'nothing':
         return c, d
     elif obj == 'gml': 
@@ -59,8 +60,6 @@ def smoothing_spline_reg(Ut,Wt,z,yhat,obj = 'nothing'):
     else:
         raise Exception("Unknown objective")
 
-p      = 2
-xi     = (b-a) ** (2 * p - 1)
 
 
 # Plot estimate for different values of lambda
@@ -95,7 +94,7 @@ ax[2].plot(xx,f(xx),'--',color = 'navy', linewidth=1.5)
 ax[2].plot(x,yhat,'bo',markersize = 4.5, color = 'cornflowerblue')
 ax[2].plot(x,yhat-n*lam/xi*c,color = 'tomato', linewidth=1.5)
 ax[2].set_title('$\lambda = {:1.0e}$'.format(lam), fontsize = 18)
-plt.legend([ '$y(x)$','data','model'],loc = 'upper left', numpoints = 1, prop = {'size': 18}, bbox_to_anchor=(1, 1))
+plt.legend([ '$y(x)$','$\hat{y}_i$','model'],loc = 'upper left', numpoints = 1, prop = {'size': 18}, bbox_to_anchor=(1, 1))
 ax[2].xaxis.set_visible(False)
 ax[2].yaxis.set_visible(False)
 ax[2].set_facecolor('whitesmoke')
