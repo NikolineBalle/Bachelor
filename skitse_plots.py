@@ -7,6 +7,7 @@ from scipy import optimize
 from scipy.special import erfinv
 from scipy.interpolate import interp1d
 from scipy import interpolate
+from mpl_toolkits.axisartist.axislines import SubplotZero
 
 def poly_interp(xi_multi,yi_multi):
     """
@@ -54,13 +55,16 @@ def plot_poly(xi_multi, yi_multi, c):
     plt.plot(xi_multi,yi_multi,'.', color = 'teal',  markersize=16) 
     plt.plot(22.5, 1.05, '.', color='darkslategray', markersize=16)
     plt.plot(x,y,'-', color = 'lightskyblue', linewidth = 2.5)
+    plt.grid()
     plt.ylim(yi_multi.min()-1, yi_multi.max()+1)
     ax = plt.gca()
     ax.set_facecolor('whitesmoke')
-    for spine in plt.gca().spines.values():
-        spine.set_visible(False)
-    plt.xticks(x, " ")
-    plt.yticks(y, " ")
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    plt.xticks([])
+    plt.yticks([])
+    plt.xlabel('x', loc = 'right', fontsize = 14)
+    plt.ylabel('y(x)', fontsize = 14)
     plt.tick_params(left=False, bottom = False, right = False, top = False)
     plt.legend(['Datapoints', '$n+1$ datapoint'], loc='upper left', numpoints=1, prop={'size': 16})
     plt.xlim(-2, 23.7)
@@ -91,8 +95,8 @@ def plot_splines(x,y, datapoint):
     ax.set_facecolor('whitesmoke')
     for spine in plt.gca().spines.values():
         spine.set_visible(False)
-    plt.xticks(x, " ")
-    plt.yticks(y, " ")
+    plt.xticks([])
+    plt.yticks([])
     plt.tick_params(left=False, bottom = False, right = False, top = False)
     plt.legend(['Datapoints', '$n+1$ datapoint','Linear', 'Cubic'], loc='lower left', numpoints=1, prop={'size': 16},bbox_to_anchor=(1, 0) )
     plt.xlim(0, 23.3)
@@ -127,8 +131,8 @@ def sum_of_functions(x,y, x1, y1, point1, point2):
     ax.set_facecolor('whitesmoke')
     for spine in plt.gca().spines.values():
         spine.set_visible(False)
-    plt.xticks(xticks, " ")
-    plt.yticks(y, " ")
+    plt.xticks([])
+    plt.yticks([])
     plt.xticks([1,10], ['$x_a$','$x_b$'], fontsize=22)
     plt.tick_params(left=False, bottom = True, right = False, top = False)
     plt.show()
@@ -171,7 +175,7 @@ def piecewise_derivative(allx, color):
     plt.plot(emptypointx, emptypointy, 'o', color='black', fillstyle= 'none', markersize=9)
     plt.plot(holepointx, holepointy, 'o', color=color, markersize=9)
     plt.xticks(allx, my_xticks, fontsize=20)
-    plt.yticks(y, " ")
+    plt.yticks([])
     plt.ylabel('$y\ ^{\ \prime} (x)$', fontsize=20)
     plt.plot()
     plt.xlim(-0.3,7.5)
@@ -217,7 +221,7 @@ def piecewise_function(allx, color):
     plt.plot(xnew4, f4(xnew4), '-', color = color, linewidth=3)
     plt.plot(holepointx, holepointy, 'o', color=color, markersize=9)
     plt.xticks(allx, my_xticks, fontsize=20)
-    plt.yticks(y, " ")
+    plt.yticks([])
     plt.ylabel('$y\ (x)$', fontsize=20)
     plt.plot()
     plt.xlim(-0.2,7.5)
@@ -241,7 +245,7 @@ def yhatskitse(x,y):
     plt.plot(x3, f2(x3), '--', color='cornflowerblue', linewidth = 1)
     plt.xlim(0.8, 9.2)
     plt.ylim(2, 3.2)
-    plt.yticks(y, " ")
+    plt.yticks([])
     ax = plt.gca()
     ax.set_facecolor('whitesmoke')
     for spine in plt.gca().spines.values():
@@ -273,7 +277,7 @@ def yhatskitsewpred(x,y):
     plt.plot(x3, f2(x3), '--', color='cornflowerblue', linewidth = 1, alpha = 0.2)
     plt.xlim(0.8, 9.2)
     plt.ylim(2, 3.2)
-    plt.yticks(y, " ")
+    plt.yticks([])
     ax = plt.gca()
     ax.set_facecolor('whitesmoke')
     for spine in plt.gca().spines.values():
@@ -316,7 +320,7 @@ yhatskitse(x,y)
 
 yhatskitsewpred(x,y)
 
-# %%
+
 # Plot of linear and cubic splines interpolating x and y coordinates and an extra datapoint
 x = np.linspace(0, 20, num=11, endpoint=True)
 y = np.cos(-x**2/8.9)
