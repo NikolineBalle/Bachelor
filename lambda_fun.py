@@ -84,6 +84,23 @@ def min_GCV(N, x, p, yhat, method, usage,  bounds = 'nothing', q = 'nothing'):
             res[i] = GCV(q[i])
         return res
 
+def y(x):
+    return 0.25*np.cos(4*np.pi *x) + 0.15*np.sin(12* np.pi *x) + 0.2 * x
+
+def extrapolate(x, yhat, xall, a, b, p, N, lam):
+    """
+    Input x-values for the interval and all the x-values including the x-values, where the should be extrapolated.
+    """
+    xi = (b-a) ** (2 * p - 1)
+    Ut, Vt = egrss.generators((x-a)/(b-a),p)
+    Utt, Vtt = egrss.generators((xall-a)/(b-a),p)
+    Wt, z  = egrss.potrf(Ut,Vt,N*lam/xi)
+    c,d    = smoothing_spline_reg(Ut,Wt,z,yhat)
+    cextra = np.zeros(len(xall)-len(x))
+    ct =  np.concatenate((c,cextra),axis=0)
+    yt = egrss.symv(Utt,Vtt,ct)+Utt.T@d
+    return yt, c, ct
+
 """
 # Fit when pertubating a point
 def pertubation(datapoint, yhat, n_fit, quantile):
